@@ -11,3 +11,7 @@ frontend/dist/
 .vscode/
 *.sqlite3
 .DS_Store
+
+# Video walkthrough script files (local presentation materials)
+VIDEO_WALKTHROUGH_SCRIPT.*
+build_video_script_pdf.py
