@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: dealerdesk_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dealerdesk
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d dealerdesk"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  supplier-mock:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dealerdesk_supplier_mock
+    restart: unless-stopped
+    command: python mock_supplier.py
+    ports:
+      - "8099:8099"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dealerdesk_web
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/dealerdesk
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-django-insecure-dev-key}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      SUPPLIER_API_URL: http://supplier-mock:8099
+      SUPPLIER_API_KEY: dev-supplier-key
+    depends_on:
+      db:
+        condition: service_healthy
+      supplier-mock:
+        condition: service_started
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py seed_data &&
+             python manage.py seed_data &&
+             python manage.py runserver 0.0.0.0:8000 --noreload"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dealerdesk_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://web:8000
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
