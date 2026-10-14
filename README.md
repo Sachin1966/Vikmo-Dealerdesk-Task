@@ -2,6 +2,8 @@
 
 A robust, AI-native B2B parts distribution and ordering engine built with Django, PostgreSQL, and LLM tool calling. Conforms strictly to the VIKMO DealerDesk API and Run Contract.
 
+🎥 **Video Walkthrough:** [Watch Project Demo on YouTube](https://youtu.be/B9uzxkPz43c)
+
 ---
 
 ## Tracks & Scope
@@ -124,5 +126,5 @@ Includes:
 
 - **Tracks:** Both **Django Track** and **AI / ML Track** implemented (including optional Bonus parts: Supplier Sync, Assistant, Forecasting & Frontend).
 - **LLM Provider:** Groq (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant`) with automatic fallback to Gemini (`gemini-1.5-flash`), OpenAI (`gpt-4o-mini`), or deterministic tool engine.
-- **Video Walkthrough:** [Link to Walkthrough Video](https://www.youtube.com/)
+- **Video Walkthrough:** [Watch Walkthrough Video on YouTube](https://youtu.be/B9uzxkPz43c)
 - **Decisions & Rationale:** See [`DECISIONS.md`](./DECISIONS.md) for detailed line-by-line answers with exact code citations.
